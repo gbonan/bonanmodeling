@@ -28,7 +28,6 @@ function [fluxvar] = canopy_turbulence (dt, physcon, forcvar, surfvar, leafvar, 
 %   surfvar.pai         ! Canopy plant area index (m2/m2)
 %   surfvar.nlev        ! Index for top level
 %   surfvar.ntop        ! Index for top leaf layer
-%   surfvar.nbot        ! Index for bottom leaf layer
 %   surfvar.nsoi        ! First canopy layer is soil
 %   surfvar.zs          ! Canopy height for scalar concentration and source (m)
 %   surfvar.zw          ! Canopy height at layer interfaces (m)
@@ -152,7 +151,7 @@ fluxvar.uaf(p) = fluxvar.ustar(p) / fluxvar.beta(p);
 
 lm = 2 * fluxvar.beta(p)^3 * fluxvar.Lc(p);
 lm_over_beta = lm / fluxvar.beta(p);
-for ic = surfvar.nbot(p):surfvar.ntop(p)
+for ic = surfvar.nsoi(p)+1:surfvar.ntop(p)
    fluxvar.wind(p,ic) = fluxvar.uaf(p) * exp((surfvar.zs(p,ic) - surfvar.hc(p)) / lm_over_beta);
    fluxvar.wind(p,ic) = max(fluxvar.wind(p,ic), 0.1);
 end
@@ -212,7 +211,7 @@ fluxvar.ga_prof(p,ic) = forcvar.rhomol(p) * physcon.vkc * fluxvar.ustar(p) / (zl
 
 % Within-canopy aerodynamic conductances
 
-for ic = surfvar.nbot(p):surfvar.ntop(p)-1
+for ic = surfvar.nsoi(p)+1:surfvar.ntop(p)-1
    zl = surfvar.zs(p,ic) - surfvar.hc(p);
    zu = surfvar.zs(p,ic+1) - surfvar.hc(p);
    res = fluxvar.PrSc(p) / (fluxvar.beta(p) * fluxvar.ustar(p)) * (exp(-zl/lm_over_beta) - exp(-zu/lm_over_beta));
@@ -258,7 +257,7 @@ end
 % Aerodynamic conductance at ground
 
 ic = surfvar.nsoi(p);
-ic_plus_one = surfvar.nbot(p);
+ic_plus_one = surfvar.nsoi(p)+1;
 
 z0m_g = 0.01;                         % Roughness length of ground (m)
 z0c_g = 0.1 * z0m_g;                  % Roughness length for scalars

@@ -165,7 +165,19 @@ for p = 1:npts
       end
    end
 
-   % Zero out non-canopy layers
+   % Find the lowest vegetation layer
+
+   for ic = surfvar.ntop(p): -1: surfvar.nbot(p)
+      if (surfvar.dpai(p,ic) > 0)
+         ic_bot = ic;
+      end
+   end
+   surfvar.nbot(p) = ic_bot;
+
+   % Zero out non-vegetation layers
+
+   ic = surfvar.nsoi(p);
+   surfvar.dpai(p,ic) = 0;
 
    for ic = surfvar.ntop(p)+1:surfvar.nlev(p)
       surfvar.dpai(p,ic) = 0;
@@ -203,51 +215,46 @@ for p = 1:npts
       leafvar.gbh(p,ic,leafvar.isun) = 2.268731551029694;
       leafvar.gbh(p,ic,leafvar.isha) = 2.268731551029694;
       leafvar.gbv(p,ic,leafvar.isun) = 2.496430918408511;
-      leafvar.gbv(p,ic,leafvar.isha) = 2.4964309184085112;
+      leafvar.gbv(p,ic,leafvar.isha) = 2.496430918408511;
    end
 
-   ic =  2; leafvar.gs(p,ic,leafvar.isun) = 0.1055192299591170; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic =  3; leafvar.gs(p,ic,leafvar.isun) = 0.1055242801518130; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic =  4; leafvar.gs(p,ic,leafvar.isun) = 0.1055442917843868; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic =  5; leafvar.gs(p,ic,leafvar.isun) = 0.1055941138135227; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic =  6; leafvar.gs(p,ic,leafvar.isun) = 0.1056908793262697; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic =  7; leafvar.gs(p,ic,leafvar.isun) = 0.1058528110177235; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic =  8; leafvar.gs(p,ic,leafvar.isun) = 0.1060982785799807; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic =  9; leafvar.gs(p,ic,leafvar.isun) = 0.1064449769725067; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 10; leafvar.gs(p,ic,leafvar.isun) = 0.1069092429994712; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 11; leafvar.gs(p,ic,leafvar.isun) = 0.1075055939313528; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 12; leafvar.gs(p,ic,leafvar.isun) = 0.1082466006575611; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 13; leafvar.gs(p,ic,leafvar.isun) = 0.1091431941575199; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 14; leafvar.gs(p,ic,leafvar.isun) = 0.1102054367680129; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 15; leafvar.gs(p,ic,leafvar.isun) = 0.1114436673549660; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 16; leafvar.gs(p,ic,leafvar.isun) = 0.1128697739318455; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 17; leafvar.gs(p,ic,leafvar.isun) = 0.1139609997662955; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 18; leafvar.gs(p,ic,leafvar.isun) = 0.1171854769922459; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 19; leafvar.gs(p,ic,leafvar.isun) = 0.1187962807892496; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 20; leafvar.gs(p,ic,leafvar.isun) = 0.1208179425962061; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 21; leafvar.gs(p,ic,leafvar.isun) = 0.1228222278933264; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 22; leafvar.gs(p,ic,leafvar.isun) = 0.1265187201079511; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
-   ic = 23; leafvar.gs(p,ic,leafvar.isun) = 0.1302060211116664; leafvar.gs(p,ic,leafvar.isha) = 4.2012509631176821E-003;
-   ic = 24; leafvar.gs(p,ic,leafvar.isun) = 0.1324769753414125; leafvar.gs(p,ic,leafvar.isha) = 5.2367461490856618E-003;
-   ic = 25; leafvar.gs(p,ic,leafvar.isun) = 0.1368698950422385; leafvar.gs(p,ic,leafvar.isha) = 5.5301527204908814E-003;
-   ic = 26; leafvar.gs(p,ic,leafvar.isun) = 0.1409781702869481; leafvar.gs(p,ic,leafvar.isha) = 9.3004358317120180E-003;
-   ic = 27; leafvar.gs(p,ic,leafvar.isun) = 0.1453771563594110; leafvar.gs(p,ic,leafvar.isha) = 9.4127133298050371E-003;
-   ic = 28; leafvar.gs(p,ic,leafvar.isun) = 0.1500692855259890; leafvar.gs(p,ic,leafvar.isha) = 1.2673855474610703E-002;
-   ic = 29; leafvar.gs(p,ic,leafvar.isun) = 0.1550625267179841; leafvar.gs(p,ic,leafvar.isha) = 1.7001098609145948E-002;
-   ic = 30; leafvar.gs(p,ic,leafvar.isun) = 0.1612573684054735; leafvar.gs(p,ic,leafvar.isha) = 2.3169937120171465E-002;
-   ic = 31; leafvar.gs(p,ic,leafvar.isun) = 0.1670070755851650; leafvar.gs(p,ic,leafvar.isha) = 2.7922863298797198E-002;
-   ic = 32; leafvar.gs(p,ic,leafvar.isun) = 0.1729085723882166; leafvar.gs(p,ic,leafvar.isha) = 3.7604357650450893E-002;
-   ic = 33; leafvar.gs(p,ic,leafvar.isun) = 0.1789636092244607; leafvar.gs(p,ic,leafvar.isha) = 4.6973864571307165E-002;
-   ic = 34; leafvar.gs(p,ic,leafvar.isun) = 0.1851674300515763; leafvar.gs(p,ic,leafvar.isha) = 5.9133058475084523E-002;
-   ic = 35; leafvar.gs(p,ic,leafvar.isun) = 0.1934936004678613; leafvar.gs(p,ic,leafvar.isha) = 7.2069695598315137E-002;
-   ic = 36; leafvar.gs(p,ic,leafvar.isun) = 0.1998800427890550; leafvar.gs(p,ic,leafvar.isha) = 8.7715286232307205E-002;
-   ic = 37; leafvar.gs(p,ic,leafvar.isun) = 0.2062193012225244; leafvar.gs(p,ic,leafvar.isha) = 0.1061384302864682;
-   ic = 38; leafvar.gs(p,ic,leafvar.isun) = 0.2125360681852630; leafvar.gs(p,ic,leafvar.isha) = 0.1228400116453672;
-   ic = 39; leafvar.gs(p,ic,leafvar.isun) = 0.2173608304404607; leafvar.gs(p,ic,leafvar.isha) = 0.1417637263927490;
-   ic = 40; leafvar.gs(p,ic,leafvar.isun) = 0.2229022164242044; leafvar.gs(p,ic,leafvar.isha) = 0.1584830781836984;
-   ic = 41; leafvar.gs(p,ic,leafvar.isun) = 0.2272705787429249; leafvar.gs(p,ic,leafvar.isha) = 0.1712625620594075;
-   ic = 42; leafvar.gs(p,ic,leafvar.isun) = 0.2303710181620154; leafvar.gs(p,ic,leafvar.isha) = 0.1801177896104632;
-   ic = 43; leafvar.gs(p,ic,leafvar.isun) = 0.2315642727778051; leafvar.gs(p,ic,leafvar.isha) = 0.1844525262388218;
+   ic =  7; leafvar.gs(p,ic,leafvar.isun) = 0.1056193510550169; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic =  8; leafvar.gs(p,ic,leafvar.isun) = 0.1058669704208841; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic =  9; leafvar.gs(p,ic,leafvar.isun) = 0.1062166035088956; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 10; leafvar.gs(p,ic,leafvar.isun) = 0.1066846074875817; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 11; leafvar.gs(p,ic,leafvar.isun) = 0.1072854387286280; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 12; leafvar.gs(p,ic,leafvar.isun) = 0.1080315168674592; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 13; leafvar.gs(p,ic,leafvar.isun) = 0.1089335362366439; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 14; leafvar.gs(p,ic,leafvar.isun) = 0.1100012607812562; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 15; leafvar.gs(p,ic,leafvar.isun) = 0.1112447128077408; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 16; leafvar.gs(p,ic,leafvar.isun) = 0.1126755044648808; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 17; leafvar.gs(p,ic,leafvar.isun) = 0.1138467165585616; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 18; leafvar.gs(p,ic,leafvar.isun) = 0.1170524695200598; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 19; leafvar.gs(p,ic,leafvar.isun) = 0.1186451281076514; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 20; leafvar.gs(p,ic,leafvar.isun) = 0.1206859738130298; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 21; leafvar.gs(p,ic,leafvar.isun) = 0.1228219389652392; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 22; leafvar.gs(p,ic,leafvar.isun) = 0.1263235652964973; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 23; leafvar.gs(p,ic,leafvar.isun) = 0.1300019677357508; leafvar.gs(p,ic,leafvar.isha) = 2.0000000000000000E-003;
+   ic = 24; leafvar.gs(p,ic,leafvar.isun) = 0.1322680545506565; leafvar.gs(p,ic,leafvar.isha) = 5.2146013029975334E-003;
+   ic = 25; leafvar.gs(p,ic,leafvar.isun) = 0.1367071935229807; leafvar.gs(p,ic,leafvar.isha) = 5.5227688387169205E-003;
+   ic = 26; leafvar.gs(p,ic,leafvar.isun) = 0.1408216759258680; leafvar.gs(p,ic,leafvar.isha) = 9.2945439124555301E-003;
+   ic = 27; leafvar.gs(p,ic,leafvar.isun) = 0.1452273039039047; leafvar.gs(p,ic,leafvar.isha) = 9.4101275089266447E-003;
+   ic = 28; leafvar.gs(p,ic,leafvar.isun) = 0.1499262843535941; leafvar.gs(p,ic,leafvar.isha) = 1.2582674218550544E-002;
+   ic = 29; leafvar.gs(p,ic,leafvar.isun) = 0.1549264640058029; leafvar.gs(p,ic,leafvar.isha) = 1.6999874421743270E-002;
+   ic = 30; leafvar.gs(p,ic,leafvar.isun) = 0.1611234013632947; leafvar.gs(p,ic,leafvar.isha) = 2.3036435105984941E-002;
+   ic = 31; leafvar.gs(p,ic,leafvar.isun) = 0.1668845999057947; leafvar.gs(p,ic,leafvar.isha) = 2.7903866816023401E-002;
+   ic = 32; leafvar.gs(p,ic,leafvar.isun) = 0.1727971327085968; leafvar.gs(p,ic,leafvar.isha) = 3.7385308959493969E-002;
+   ic = 33; leafvar.gs(p,ic,leafvar.isun) = 0.1788628079180081; leafvar.gs(p,ic,leafvar.isha) = 4.6808450662473224E-002;
+   ic = 34; leafvar.gs(p,ic,leafvar.isun) = 0.1850771375553107; leafvar.gs(p,ic,leafvar.isha) = 5.9036977283335762E-002;
+   ic = 35; leafvar.gs(p,ic,leafvar.isun) = 0.1934140277837149; leafvar.gs(p,ic,leafvar.isha) = 7.1890808689035093E-002;
+   ic = 36; leafvar.gs(p,ic,leafvar.isun) = 0.1998116684650200; leafvar.gs(p,ic,leafvar.isha) = 8.7547774703355410E-002;
+   ic = 37; leafvar.gs(p,ic,leafvar.isun) = 0.2061626747018590; leafvar.gs(p,ic,leafvar.isha) = 0.1059444058487105;
+   ic = 38; leafvar.gs(p,ic,leafvar.isun) = 0.2124795008223110; leafvar.gs(p,ic,leafvar.isha) = 0.1228398700721039;
+   ic = 39; leafvar.gs(p,ic,leafvar.isun) = 0.2173241738995193; leafvar.gs(p,ic,leafvar.isha) = 0.1416660859387607;
+   ic = 40; leafvar.gs(p,ic,leafvar.isun) = 0.2228796106202699; leafvar.gs(p,ic,leafvar.isha) = 0.1584170776550386;
+   ic = 41; leafvar.gs(p,ic,leafvar.isun) = 0.2272584280787935; leafvar.gs(p,ic,leafvar.isha) = 0.1712280540285039;
+   ic = 42; leafvar.gs(p,ic,leafvar.isun) = 0.2303662043528620; leafvar.gs(p,ic,leafvar.isha) = 0.1801048624092090;
+   ic = 43; leafvar.gs(p,ic,leafvar.isun) = 0.2315636153119537; leafvar.gs(p,ic,leafvar.isha) = 0.1844507421254655;
 
    % Net radiation of each leaf - specify Rn rather than calculate
 
@@ -256,48 +263,43 @@ for p = 1:npts
 %     leafvar.rnleaf(p,ic,leafvar.isha) = ...;
 %  end
 
-   ic =  2; leafvar.rnleaf(p,ic,leafvar.isun) = 274.1550972520949; leafvar.rnleaf(p,ic,leafvar.isha) = 135.5805463019297;
-   ic =  3; leafvar.rnleaf(p,ic,leafvar.isun) = 152.6466432111793; leafvar.rnleaf(p,ic,leafvar.isha) = 14.07209226101406;
-   ic =  4; leafvar.rnleaf(p,ic,leafvar.isun) = 143.3106465111127; leafvar.rnleaf(p,ic,leafvar.isha) = 4.736095560947426;
-   ic =  5; leafvar.rnleaf(p,ic,leafvar.isun) = 141.1349601292557; leafvar.rnleaf(p,ic,leafvar.isha) = 2.560409179090552;
-   ic =  6; leafvar.rnleaf(p,ic,leafvar.isun) = 140.3515782682666; leafvar.rnleaf(p,ic,leafvar.isha) = 1.777027318101450;
-   ic =  7; leafvar.rnleaf(p,ic,leafvar.isun) = 139.9989618149844; leafvar.rnleaf(p,ic,leafvar.isha) = 1.424410864819143;
-   ic =  8; leafvar.rnleaf(p,ic,leafvar.isun) = 139.8193779719216; leafvar.rnleaf(p,ic,leafvar.isha) = 1.244827021756379;
-   ic =  9; leafvar.rnleaf(p,ic,leafvar.isun) = 139.7226856943809; leafvar.rnleaf(p,ic,leafvar.isha) = 1.148134744215676;
-   ic = 10; leafvar.rnleaf(p,ic,leafvar.isun) = 139.6715516492443; leafvar.rnleaf(p,ic,leafvar.isha) = 1.097000699079142;
-   ic = 11; leafvar.rnleaf(p,ic,leafvar.isun) = 139.6486777617586; leafvar.rnleaf(p,ic,leafvar.isha) = 1.074126811593461;
-   ic = 12; leafvar.rnleaf(p,ic,leafvar.isun) = 139.6454611443424; leafvar.rnleaf(p,ic,leafvar.isha) = 1.070910194177239;
-   ic = 13; leafvar.rnleaf(p,ic,leafvar.isun) = 139.6574886918659; leafvar.rnleaf(p,ic,leafvar.isha) = 1.082937741700723;
-   ic = 14; leafvar.rnleaf(p,ic,leafvar.isun) = 139.6825518740815; leafvar.rnleaf(p,ic,leafvar.isha) = 1.108000923916256;
-   ic = 15; leafvar.rnleaf(p,ic,leafvar.isun) = 139.7197003420071; leafvar.rnleaf(p,ic,leafvar.isha) = 1.145149391841863;
-   ic = 16; leafvar.rnleaf(p,ic,leafvar.isun) = 139.7687630478708; leafvar.rnleaf(p,ic,leafvar.isha) = 1.194212097705659;
-   ic = 17; leafvar.rnleaf(p,ic,leafvar.isun) = 139.8300945195577; leafvar.rnleaf(p,ic,leafvar.isha) = 1.255543569392491;
-   ic = 18; leafvar.rnleaf(p,ic,leafvar.isun) = 139.9044342012941; leafvar.rnleaf(p,ic,leafvar.isha) = 1.329883251128853;
-   ic = 19; leafvar.rnleaf(p,ic,leafvar.isun) = 139.9928218561823; leafvar.rnleaf(p,ic,leafvar.isha) = 1.418270906017080;
-   ic = 20; leafvar.rnleaf(p,ic,leafvar.isun) = 140.0965359142808; leafvar.rnleaf(p,ic,leafvar.isha) = 1.521984964115638;
-   ic = 21; leafvar.rnleaf(p,ic,leafvar.isun) = 140.2170312214647; leafvar.rnleaf(p,ic,leafvar.isha) = 1.642480271299498;
-   ic = 22; leafvar.rnleaf(p,ic,leafvar.isun) = 140.3558546400128; leafvar.rnleaf(p,ic,leafvar.isha) = 1.781303689847561;
-   ic = 23; leafvar.rnleaf(p,ic,leafvar.isun) = 140.5145139618931; leafvar.rnleaf(p,ic,leafvar.isha) = 1.939963011727875;
-   ic = 24; leafvar.rnleaf(p,ic,leafvar.isun) = 140.6942683355502; leafvar.rnleaf(p,ic,leafvar.isha) = 2.119717385385012;
-   ic = 25; leafvar.rnleaf(p,ic,leafvar.isun) = 140.8957966907126; leafvar.rnleaf(p,ic,leafvar.isha) = 2.321245740547398;
-   ic = 26; leafvar.rnleaf(p,ic,leafvar.isun) = 141.1186839776834; leafvar.rnleaf(p,ic,leafvar.isha) = 2.544133027518268;
-   ic = 27; leafvar.rnleaf(p,ic,leafvar.isun) = 141.3606433537155; leafvar.rnleaf(p,ic,leafvar.isha) = 2.786092403550295;
-   ic = 28; leafvar.rnleaf(p,ic,leafvar.isun) = 141.6163675209725; leafvar.rnleaf(p,ic,leafvar.isha) = 3.041816570807255;
-   ic = 29; leafvar.rnleaf(p,ic,leafvar.isun) = 141.8758806459934; leafvar.rnleaf(p,ic,leafvar.isha) = 3.301329695828233;
-   ic = 30; leafvar.rnleaf(p,ic,leafvar.isun) = 142.1222598264425; leafvar.rnleaf(p,ic,leafvar.isha) = 3.547708876277293;
-   ic = 31; leafvar.rnleaf(p,ic,leafvar.isun) = 142.3286461575954; leafvar.rnleaf(p,ic,leafvar.isha) = 3.754095207430179;
-   ic = 32; leafvar.rnleaf(p,ic,leafvar.isun) = 142.4546334499792; leafvar.rnleaf(p,ic,leafvar.isha) = 3.880082499813955;
-   ic = 33; leafvar.rnleaf(p,ic,leafvar.isun) = 142.4425091001131; leafvar.rnleaf(p,ic,leafvar.isha) = 3.867958149947935;
-   ic = 34; leafvar.rnleaf(p,ic,leafvar.isun) = 142.2145595429649; leafvar.rnleaf(p,ic,leafvar.isha) = 3.640008592799720;
-   ic = 35; leafvar.rnleaf(p,ic,leafvar.isun) = 141.6738568074410; leafvar.rnleaf(p,ic,leafvar.isha) = 3.099305857275830;
-   ic = 36; leafvar.rnleaf(p,ic,leafvar.isun) = 140.7125813068553; leafvar.rnleaf(p,ic,leafvar.isha) = 2.138030356690095;
-   ic = 37; leafvar.rnleaf(p,ic,leafvar.isun) = 139.2336249812494; leafvar.rnleaf(p,ic,leafvar.isha) = 0.6590740310842307;
-   ic = 38; leafvar.rnleaf(p,ic,leafvar.isun) = 137.1921092835705; leafvar.rnleaf(p,ic,leafvar.isha) = -1.382441666594701;
-   ic = 39; leafvar.rnleaf(p,ic,leafvar.isun) = 134.6629482058528; leafvar.rnleaf(p,ic,leafvar.isha) = -3.911602744312447;
-   ic = 40; leafvar.rnleaf(p,ic,leafvar.isun) = 131.9427836668230; leafvar.rnleaf(p,ic,leafvar.isha) = -6.631767283342214;
-   ic = 41; leafvar.rnleaf(p,ic,leafvar.isun) = 129.7331041990678; leafvar.rnleaf(p,ic,leafvar.isha) = -8.841446751097436;
-   ic = 42; leafvar.rnleaf(p,ic,leafvar.isun) = 129.8107940035027; leafvar.rnleaf(p,ic,leafvar.isha) = -8.763756946662468;
-   ic = 43; leafvar.rnleaf(p,ic,leafvar.isun) = 143.7593131399208; leafvar.rnleaf(p,ic,leafvar.isha) = 5.184762189755574;
+   ic =  7; leafvar.rnleaf(p,ic,leafvar.isun) = 139.9869857739781; leafvar.rnleaf(p,ic,leafvar.isha) =  1.411488333307743;
+   ic =  8; leafvar.rnleaf(p,ic,leafvar.isun) = 139.8100113537029; leafvar.rnleaf(p,ic,leafvar.isha) =  1.234513913032590;
+   ic =  9; leafvar.rnleaf(p,ic,leafvar.isun) = 139.7147998761629; leafvar.rnleaf(p,ic,leafvar.isha) =  1.139302435492522;
+   ic = 10; leafvar.rnleaf(p,ic,leafvar.isun) = 139.6645467566822; leafvar.rnleaf(p,ic,leafvar.isha) =  1.089049316011852;
+   ic = 11; leafvar.rnleaf(p,ic,leafvar.isun) = 139.6422035725484; leafvar.rnleaf(p,ic,leafvar.isha) =  1.066706131878055;
+   ic = 12; leafvar.rnleaf(p,ic,leafvar.isun) = 139.6392966303582; leafvar.rnleaf(p,ic,leafvar.isha) =  1.063799189687813;
+   ic = 13; leafvar.rnleaf(p,ic,leafvar.isun) = 139.6514847604817; leafvar.rnleaf(p,ic,leafvar.isha) =  1.075987319811279;
+   ic = 14; leafvar.rnleaf(p,ic,leafvar.isun) = 139.6766021357984; leafvar.rnleaf(p,ic,leafvar.isha) =  1.101104695127997;
+   ic = 15; leafvar.rnleaf(p,ic,leafvar.isun) = 139.7137254254163; leafvar.rnleaf(p,ic,leafvar.isha) =  1.138227984745972;
+   ic = 16; leafvar.rnleaf(p,ic,leafvar.isun) = 139.7627019640728; leafvar.rnleaf(p,ic,leafvar.isha) =  1.187204523402388;
+   ic = 17; leafvar.rnleaf(p,ic,leafvar.isun) = 139.8238999626867; leafvar.rnleaf(p,ic,leafvar.isha) =  1.248402522016342;
+   ic = 18; leafvar.rnleaf(p,ic,leafvar.isun) = 139.8980702313243; leafvar.rnleaf(p,ic,leafvar.isha) =  1.322572790653995;
+   ic = 19; leafvar.rnleaf(p,ic,leafvar.isun) = 139.9862631887909; leafvar.rnleaf(p,ic,leafvar.isha) =  1.410765748120540;
+   ic = 20; leafvar.rnleaf(p,ic,leafvar.isun) = 140.0897684653183; leafvar.rnleaf(p,ic,leafvar.isha) =  1.514271024647946;
+   ic = 21; leafvar.rnleaf(p,ic,leafvar.isun) = 140.2100538053315; leafvar.rnleaf(p,ic,leafvar.isha) =  1.634556364661143;
+   ic = 22; leafvar.rnleaf(p,ic,leafvar.isun) = 140.3486818847138; leafvar.rnleaf(p,ic,leafvar.isha) =  1.773184444043382;
+   ic = 23; leafvar.rnleaf(p,ic,leafvar.isun) = 140.5071806149416; leafvar.rnleaf(p,ic,leafvar.isha) =  1.931683174271291;
+   ic = 24; leafvar.rnleaf(p,ic,leafvar.isun) = 140.6868352048059; leafvar.rnleaf(p,ic,leafvar.isha) =  2.111337764135555;
+   ic = 25; leafvar.rnleaf(p,ic,leafvar.isun) = 140.8883584829672; leafvar.rnleaf(p,ic,leafvar.isha) =  2.312861042296822;
+   ic = 26; leafvar.rnleaf(p,ic,leafvar.isun) = 141.1113792315132; leafvar.rnleaf(p,ic,leafvar.isha) =  2.535881790842842;
+   ic = 27; leafvar.rnleaf(p,ic,leafvar.isun) = 141.3536664423189; leafvar.rnleaf(p,ic,leafvar.isha) =  2.778169001648555;
+   ic = 28; leafvar.rnleaf(p,ic,leafvar.isun) = 141.6099822011559; leafvar.rnleaf(p,ic,leafvar.isha) =  3.034484760485563;
+   ic = 29; leafvar.rnleaf(p,ic,leafvar.isun) = 141.8704336551236; leafvar.rnleaf(p,ic,leafvar.isha) =  3.294936214453243;
+   ic = 30; leafvar.rnleaf(p,ic,leafvar.isun) = 142.1181913093900; leafvar.rnleaf(p,ic,leafvar.isha) =  3.542693868719610;
+   ic = 31; leafvar.rnleaf(p,ic,leafvar.isun) = 142.3264909566734; leafvar.rnleaf(p,ic,leafvar.isha) =  3.750993516003037;
+   ic = 32; leafvar.rnleaf(p,ic,leafvar.isun) = 142.4550034158019; leafvar.rnleaf(p,ic,leafvar.isha) =  3.879505975131512;
+   ic = 33; leafvar.rnleaf(p,ic,leafvar.isun) = 142.4460421185886; leafvar.rnleaf(p,ic,leafvar.isha) =  3.870544677918208;
+   ic = 34; leafvar.rnleaf(p,ic,leafvar.isun) = 142.2218178601452; leafvar.rnleaf(p,ic,leafvar.isha) =  3.646320419474797;
+   ic = 35; leafvar.rnleaf(p,ic,leafvar.isun) = 141.6851596824207; leafvar.rnleaf(p,ic,leafvar.isha) =  3.109662241750371;
+   ic = 36; leafvar.rnleaf(p,ic,leafvar.isun) = 140.7277716843982; leafvar.rnleaf(p,ic,leafvar.isha) =  2.152274243727867;
+   ic = 37; leafvar.rnleaf(p,ic,leafvar.isun) = 139.2518034108234; leafvar.rnleaf(p,ic,leafvar.isha) =  0.676305970153017;
+   ic = 38; leafvar.rnleaf(p,ic,leafvar.isun) = 137.2114197261891; leafvar.rnleaf(p,ic,leafvar.isha) = -1.364077714481233;
+   ic = 39; leafvar.rnleaf(p,ic,leafvar.isun) = 134.6805463548995; leafvar.rnleaf(p,ic,leafvar.isha) = -3.894951085770870;
+   ic = 40; leafvar.rnleaf(p,ic,leafvar.isun) = 131.9550915266485; leafvar.rnleaf(p,ic,leafvar.isha) = -6.620405914021802;
+   ic = 41; leafvar.rnleaf(p,ic,leafvar.isun) = 129.7361873094630; leafvar.rnleaf(p,ic,leafvar.isha) = -8.839310131207370;
+   ic = 42; leafvar.rnleaf(p,ic,leafvar.isun) = 129.7993862020948; leafvar.rnleaf(p,ic,leafvar.isha) = -8.776111238575538;
+   ic = 43; leafvar.rnleaf(p,ic,leafvar.isun) = 143.7045065806239; leafvar.rnleaf(p,ic,leafvar.isha) =  5.129009139953610;
 
    % Leaf heat capacity
 
@@ -315,7 +317,7 @@ for p = 1:npts
    soilvar.tsoi(p) = 294.8492736816406;        % Soil temperature (K)
    soilvar.resis(p) = 3361.509423807650;       % Soil evaporative resistance (s/m)
    soilvar.rhg(p) = 0.9984057411945876;        % Relative humidity of airspace at soil surface (fraction)
-   fluxvar.rnsoi(p) = 1.867608703739659;       % Net radiation at ground (W/m2)
+   fluxvar.rnsoi(p) = 1.896127799819662;       % Net radiation at ground (W/m2)
 end
 
 % --- Atmospheric forcing at a reference height

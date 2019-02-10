@@ -19,7 +19,6 @@ function [fluxvar] = scalar_profile (dt, p, physcon, forcvar, surfvar, leafvar, 
 %   forcvar.qref        ! Water vapor at reference height (mol/mol)
 %   surfvar.nlev        ! Index for top level
 %   surfvar.ntop        ! Index for top leaf layer
-%   surfvar.nbot        ! Index for bottom leaf layer
 %   surfvar.nsoi        ! First canopy layer is soil
 %   surfvar.zw          ! Canopy height at layer interfaces (m)
 %   surfvar.dpai        ! Layer plant area index (m2/m2)
@@ -111,7 +110,7 @@ delta0 = (fluxvar.rnsoi(p) - lambda * soilvar.rhg(p) * gs0 * (qsat0 - dqsat0 * f
 % the layers with leaves.
 % ---------------------------------------------------------------------
 
-for ic = surfvar.nbot(p):surfvar.nlev(p)
+for ic = surfvar.nsoi(p)+1:surfvar.nlev(p)
 
    if (surfvar.dpai(p,ic) > 0)
 
@@ -197,7 +196,7 @@ end
 % a2(i)*q(i-1) + b21(i)*T(i) + b22(i)*q(i) + c2(i)*q(i+1) = d2(i)
 % ---------------------------------------------------------------------
 
-for ic = surfvar.nbot(p):surfvar.nlev(p)
+for ic = surfvar.nsoi(p)+1:surfvar.nlev(p)
 
    % Storage term
 
@@ -223,7 +222,7 @@ for ic = surfvar.nbot(p):surfvar.nlev(p)
 
    % Special case for first canopy layer (i.e., immediately above the ground)
 
-   if (ic == surfvar.nbot(p))
+   if (ic == surfvar.nsoi(p)+1)
       a1(ic) = 0;
       b11(ic) = b11(ic) - fluxvar.ga_prof(p,surfvar.nsoi(p)) * alpha0;
       b12(ic) = b12(ic) - fluxvar.ga_prof(p,surfvar.nsoi(p)) * beta0;
@@ -232,7 +231,7 @@ for ic = surfvar.nbot(p):surfvar.nlev(p)
 
    % a2,b21,b22,c2,d2 coefficients for water vapor (mole fraction)
 
-   if (ic == surfvar.nbot(p))
+   if (ic == surfvar.nsoi(p)+1)
       ga_prof_ic_minus_one = gs0;
    else
       ga_prof_ic_minus_one = fluxvar.ga_prof(p,ic-1);
@@ -258,7 +257,7 @@ for ic = surfvar.nbot(p):surfvar.nlev(p)
 
    % Special case for first canopy layer (i.e., immediately above the ground)
 
-   if (ic == surfvar.nbot(p))
+   if (ic == surfvar.nsoi(p)+1)
       a2(ic) = 0;
       b21(ic) = b21(ic) - gs0 * soilvar.rhg(p) * dqsat0 * alpha0;
       b22(ic) = b22(ic) - gs0 * soilvar.rhg(p) * dqsat0 * beta0;
@@ -278,7 +277,7 @@ end
 % q(i) = f2(i) - e21(i)*T(i+1) - e22(i)*q(i+1) 
 % ---------------------------------------------------------------------
 
-ic = surfvar.nbot-1;
+ic = surfvar.nsoi(p);
 e11(ic) = 0;
 e12(ic) = 0;
 e21(ic) = 0;
@@ -286,7 +285,7 @@ e22(ic) = 0;
 f1(ic) = 0;
 f2(ic) = 0;
 
-for ic = surfvar.nbot(p):surfvar.nlev(p)
+for ic = surfvar.nsoi(p)+1:surfvar.nlev(p)
 
    % The matrix to invert is:
    %
@@ -329,7 +328,7 @@ fluxvar.qair(p,ic) = f2(ic);
 
 % Layers through to bottom of canopy
 
-for ic = surfvar.nlev(p)-1: -1: surfvar.nbot(p)
+for ic = surfvar.nlev(p)-1: -1: surfvar.nsoi(p)+1
    fluxvar.tair(p,ic) = f1(ic) - e11(ic)*fluxvar.tair(p,ic+1) - e12(ic)*fluxvar.qair(p,ic+1);
    fluxvar.qair(p,ic) = f2(ic) - e21(ic)*fluxvar.tair(p,ic+1) - e22(ic)*fluxvar.qair(p,ic+1);
 end
@@ -337,7 +336,7 @@ end
 % Ground
 
 ic = surfvar.nsoi(p);
-fluxvar.tg(p) = alpha0 * fluxvar.tair(p,surfvar.nbot(p)) + beta0 * fluxvar.qair(p,surfvar.nbot(p)) + delta0;
+fluxvar.tg(p) = alpha0 * fluxvar.tair(p,ic+1) + beta0 * fluxvar.qair(p,ic+1) + delta0;
 fluxvar.tair(p,ic) = fluxvar.tg(p);
 fluxvar.qair(p,ic) = soilvar.rhg(p) * (qsat0 + dqsat0 * (fluxvar.tair(p,ic) - fluxvar.tair_old(p,ic)));
 
@@ -347,7 +346,7 @@ fluxvar.qair(p,ic) = soilvar.rhg(p) * (qsat0 + dqsat0 * (fluxvar.tair(p,ic) - fl
 % Tlsha(i) = alpha_sha(i)*T(i) + beta_sha(i)*q(i) + delta_sha(i)
 % ---------------------------------------------------------------------
 
-for ic = surfvar.nbot(p):surfvar.nlev(p)
+for ic = surfvar.nsoi(p)+1:surfvar.nlev(p)
    fluxvar.tveg(p,ic,leafvar.isun) = alpha(ic,leafvar.isun)*fluxvar.tair(p,ic) ...
                                    + beta(ic,leafvar.isun)*fluxvar.qair(p,ic) + delta(ic,leafvar.isun);
    fluxvar.tveg(p,ic,leafvar.isha) = alpha(ic,leafvar.isha)*fluxvar.tair(p,ic) ...
@@ -379,16 +378,15 @@ fluxvar.tveg(p,ic,leafvar.isha) = 0;
 % --------------------
 
 ic = surfvar.nsoi(p);
-ic_plus_one = surfvar.nbot(p);
-fluxvar.shsoi(p) = -forcvar.cpair(p) * (fluxvar.tair(p,ic_plus_one) - fluxvar.tair(p,ic)) * fluxvar.ga_prof(p,ic);
-fluxvar.etsoi(p) = -(fluxvar.qair(p,ic_plus_one) - fluxvar.qair(p,ic)) * gs0;
+fluxvar.shsoi(p) = -forcvar.cpair(p) * (fluxvar.tair(p,ic+1) - fluxvar.tair(p,ic)) * fluxvar.ga_prof(p,ic);
+fluxvar.etsoi(p) = -(fluxvar.qair(p,ic+1) - fluxvar.qair(p,ic)) * gs0;
 fluxvar.gsoi(p) = c01 + c02 * fluxvar.tg(p);
 
 % ------------------------
 % Vegetation source fluxes
 % ------------------------
 
-for ic = surfvar.nbot(p):surfvar.nlev(p)
+for ic = surfvar.nsoi(p)+1:surfvar.nlev(p)
    fluxvar.shveg(p,ic) = 0;
    fluxvar.etveg(p,ic) = 0;
    fluxvar.stveg(p,ic) = 0;
@@ -407,7 +405,7 @@ end
 % Vertical sensible heat and water vapor fluxes between layers
 % ------------------------------------------------------------
 
-for ic = surfvar.nbot(p):surfvar.nlev(p)-1
+for ic = surfvar.nsoi(p)+1:surfvar.nlev(p)-1
    fluxvar.shair(p,ic) = -forcvar.cpair(p) * (fluxvar.tair(p,ic+1) - fluxvar.tair(p,ic)) * fluxvar.ga_prof(p,ic);
    fluxvar.etair(p,ic) = -(fluxvar.qair(p,ic+1) - fluxvar.qair(p,ic)) * fluxvar.ga_prof(p,ic);
 end
@@ -420,7 +418,7 @@ fluxvar.etair(p,ic) = -(forcvar.qref(p) - fluxvar.qair(p,ic)) * fluxvar.ga_prof(
 % Canopy air storage flux (W/m2) and its sensible heat and water vapor terms
 % --------------------------------------------------------------------------
 
-for ic = surfvar.nbot(p):surfvar.nlev(p)
+for ic = surfvar.nsoi(p)+1:surfvar.nlev(p)
    dz_over_dt = (surfvar.zw(p,ic) - surfvar.zw(p,ic-1)) / dt;
    storage_sh(ic) = forcvar.rhomol(p) * forcvar.cpair(p) * (fluxvar.tair(p,ic) - fluxvar.tair_old(p,ic)) * dz_over_dt;
    storage_et(ic) = forcvar.rhomol(p) * (fluxvar.qair(p,ic) - fluxvar.qair_old(p,ic)) * dz_over_dt;
@@ -440,7 +438,7 @@ end
 
 % Vegetation source fluxes energy balance
 
-for ic = surfvar.nbot(p):surfvar.nlev(p)
+for ic = surfvar.nsoi(p)+1:surfvar.nlev(p)
    err = avail_energy(ic,leafvar.isun) + avail_energy(ic,leafvar.isha) ...
        - fluxvar.shveg(p,ic) - lambda * fluxvar.etveg(p,ic) - fluxvar.stveg(p,ic);
    if (abs(err) > 0.001)
@@ -450,9 +448,9 @@ end
 
 % Flux conservation at each layer. Note special case for first canopy layer.
 
-for ic = surfvar.nbot(p):surfvar.nlev(p)
+for ic = surfvar.nsoi(p)+1:surfvar.nlev(p)
 
-   if (ic == surfvar.nbot(p))
+   if (ic == surfvar.nsoi(p)+1)
       err = storage_sh(ic) - (fluxvar.shsoi(p) + fluxvar.shveg(p,ic) - fluxvar.shair(p,ic));
    else
       err = storage_sh(ic) - (fluxvar.shair(p,ic-1) + fluxvar.shveg(p,ic) - fluxvar.shair(p,ic));
@@ -461,7 +459,7 @@ for ic = surfvar.nbot(p):surfvar.nlev(p)
       error ('ScalarProfile: Sensible heat layer conservation error')
    end
 
-   if (ic == surfvar.nbot(p))
+   if (ic == surfvar.nsoi(p)+1)
       err = storage_et(ic) - (fluxvar.etsoi(p) + fluxvar.etveg(p,ic) - fluxvar.etair(p,ic));
    else
       err = storage_et(ic) - (fluxvar.etair(p,ic-1) + fluxvar.etveg(p,ic) - fluxvar.etair(p,ic));
@@ -478,7 +476,7 @@ end
 
 sum_src = fluxvar.shsoi(p);
 sum_storage = 0;
-for ic = surfvar.nbot(p):surfvar.ntop(p)
+for ic = surfvar.nsoi(p)+1:surfvar.ntop(p)
    sum_src = sum_src + fluxvar.shveg(p,ic);
    sum_storage = sum_storage + storage_sh(ic);
 end
@@ -493,7 +491,7 @@ end
 
 sum_src = fluxvar.etsoi(p);
 sum_storage = 0;
-for ic = surfvar.nbot(p):surfvar.ntop(p)
+for ic = surfvar.nsoi(p)+1:surfvar.ntop(p)
    sum_src = sum_src + fluxvar.etveg(p,ic);
    sum_storage = sum_storage + storage_et(ic);
 end
